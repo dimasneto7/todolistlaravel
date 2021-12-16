@@ -10,9 +10,19 @@ class Main extends Controller
     public function home(){
 
         // get available tasks
-        // $tasks = Task::all();
-        $tasks = Task::orderBy('created_at', 'desc')->get();
+        $tasks = Task::where('visible', 1)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
+        return view('home', ['tasks' => $tasks]);
+    }
+
+    public function list_invisibles(){
+
+        // get invisible tasks
+        $tasks = Task::where('visible', 0)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
         return view('home', ['tasks' => $tasks]);
     }
@@ -81,5 +91,25 @@ class Main extends Controller
         return redirect()->route('home');
 
 
+    }
+
+    public function task_invisible($id){
+
+        // make task task_invisible
+        $task = Task::find($id);
+        $task->visible = 0;
+        $task->save();
+
+        return redirect()->route('home');
+    }
+
+    public function task_visible($id){
+
+        // make task task_invisible
+        $task = Task::find($id);
+        $task->visible = 1;
+        $task->save();
+
+        return redirect()->route('home');
     }
 }
